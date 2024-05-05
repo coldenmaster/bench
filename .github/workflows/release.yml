@@ -1,0 +1,32 @@
+name: Generate Semantic Release and publish on PyPI
+on:
+  push:
+    branches:
+      - v5.x
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Setup dependencies
+        run: |
+          npm install @semantic-release/git @semantic-release/exec --no-save
+          python3 -m pip install wheel twine
+          python3 -m pip install git+https://github.com/pypa/hatch@hatch-v1.9.2
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        run: npx semantic-release
