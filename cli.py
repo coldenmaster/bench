@@ -63,6 +63,7 @@ def execute_cmd(check_for_update=True, command: str = None, logger: Logger = Non
 
 
 def cli():
+	print('into bench cli')
 	setup_clear_cache()
 	global from_command_line, bench_config, is_envvar_warn_set, verbose
 
@@ -101,6 +102,7 @@ def cli():
 		)
 
 	in_bench = is_bench_directory()
+	# print('into bench cli 1')
 
 	if (
 		not in_bench
@@ -123,6 +125,7 @@ def cli():
 
 	setup_exception_handler()
 
+	# print('into bench cli 2')
 	# handle usages like `--use-feature='feat-x'` and `--use-feature 'feat-x'`
 	if cmd_from_sys and cmd_from_sys.split("=", 1)[0].strip() in opts:
 		bench_command()
@@ -131,9 +134,12 @@ def cli():
 		with execute_cmd(check_for_update=is_cli_command, command=command, logger=logger):
 			bench_command()
 
+	# print('into bench cli 3')
 	if in_bench:
 		frappe_cmd()
+	# print('into bench cli 4')
 
+	# raise 'sb'
 	bench_command()
 
 
@@ -192,12 +198,14 @@ def change_uid():
 def app_cmd(bench_path="."):
 	f = get_env_cmd("python", bench_path=bench_path)
 	os.chdir(os.path.join(bench_path, "sites"))
+	print(f"执行app命令: python -m frappe.utils.bench_helper frappe {sys.argv[1:]}")
 	os.execv(f, [f] + ["-m", "frappe.utils.bench_helper"] + sys.argv[1:])
 
 
 def frappe_cmd(bench_path="."):
 	f = get_env_cmd("python", bench_path=bench_path)
 	os.chdir(os.path.join(bench_path, "sites"))
+	print(f"执行frappe命令: python -m frappe.utils.bench_helper frappe {sys.argv[1:]}")
 	os.execv(f, [f] + ["-m", "frappe.utils.bench_helper", "frappe"] + sys.argv[1:])
 
 
